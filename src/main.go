@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/Am2901/httpserver/src/metrics"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"math/rand"
 	"net"
@@ -69,15 +70,15 @@ func ClientIP(r *http.Request) string {
 }
 
 func images(w http.ResponseWriter, r *http.Request) {
-	start := time.Now()
-	time.Sleep(time.Millisecond * time.Duration(rand.Intn(2000)))
-	cost := time.Since(start)
-	fmt.Printf("%v\n", cost)
-	metrics.RequestsCost.WithLabelValues(r.Method, r.RequestURI).Observe(cost.Seconds())
-	w.Write([]byte(fmt.Sprintf("<h1>%d<h1>", cost)))
+	timer := metrics.NewTimer()
+	defer timer.ObserveTotal()
+	randInt := rand.Intn(2000)
+	time.Sleep(time.Millisecond * time.Duration(randInt))
+	w.Write([]byte(fmt.Sprintf("<h1>%d<h1>", randInt)))
 }
 
 func main() {
+	metrics.Register()
 	mux := http.NewServeMux()
 	// 06. debug
 	mux.HandleFunc("/debug/pprof/", pprof.Index)
@@ -86,6 +87,7 @@ func main() {
 	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
 	mux.HandleFunc("/", index)
 	mux.HandleFunc("/images", images)
+	mux.Handle("/metrics", promhttp.Handler())
 	mux.HandleFunc("/healthz", healthz)
 	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatalf("start http server failed, error: %s\n", err.Error())

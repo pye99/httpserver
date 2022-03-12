@@ -1,4 +1,4 @@
-module github.com/Am2901/httpserver
+module github.com/Am2901/httpserver/src
 
 go 1.17
 
