@@ -32,14 +32,18 @@ spec:
       GITHUB_REPO = "httpserver"
   }
   stages {
-    stage('Stage 1: Build with Kaniko') {
+    stage('Configure') {
       steps {
-        script {
-          env.imageTag = sh (script: 'git rev-parse --short HEAD ${GIT_COMMIT}', returnStdout: true).trim()
+        script {    
+          GIT_COMMIT_REV = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
         }
+      }
+    }    
+    stage('Build with Kaniko') {
+      steps {
         container('kaniko') {
           sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd`/src --cache=true \
-                  --destination=cloudnative.azurecr.io/httpserver:$imageTag \
+                  --destination=cloudnative.azurecr.io/httpserver:$GIT_COMMIT_REV \
                   --insecure \
                   --skip-tls-verify  \
                   -v=debug'
