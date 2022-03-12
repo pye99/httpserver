@@ -19,10 +19,11 @@ spec:
     - 99999
     tty: true
     volumeMounts:
-      - name: dockercred
-        mountPath: /root/.docker/
+      - name: docker-secret
+        mountPath: /kaniko/.docker
+        readOnly: true
   volumes:
-  - name: dockercred
+  - name: docker-secret
     secret:
       secretName: regcred
 """
