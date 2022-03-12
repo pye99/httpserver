@@ -9,7 +9,6 @@ pipeline {
     }
     options {
         skipDefaultCheckout()
-        ansiColor('xterm')
     }
     stages {
         stage('Checkout') {
