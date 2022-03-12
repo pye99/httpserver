@@ -27,24 +27,19 @@ spec:
     }
   }
   environment {
-      GITHUB_URL = "http://github.com"
-      GITHUB_ORG = "Am2901"
-      GITHUB_REPO = "httpserver"
+    DATED_GIT_HASH = "${new SimpleDateFormat("yyMMddHHmmss").format(new Date())}${GIT_COMMIT.take(6)}"
   }
   stages {
     stage('Configure') {
       steps {
-        script {    
-          GIT_COMMIT_REV = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-        }
+        echo "hello, starting"
       }
     }    
     stage('Build with Kaniko') {
       steps {
-        echo ${GIT_COMMIT_REV}
         container('kaniko') {
           sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd`/src --cache=true \
-          --destination=cloudnative.azurecr.io/httpserver:${GIT_COMMIT_REV} \
+          --destination=cloudnative.azurecr.io/httpserver:${DATED_GIT_HASH} \
                   --insecure \
                   --skip-tls-verify  \
                   -v=debug'
