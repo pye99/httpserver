@@ -72,9 +72,9 @@ func images(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	time.Sleep(time.Millisecond * time.Duration(rand.Intn(2000)))
 	cost := time.Since(start)
-
+	fmt.Printf("%v\n", cost)
 	metrics.RequestsCost.WithLabelValues(r.Method, r.RequestURI).Observe(cost.Seconds())
-	w.Write([]byte("<h1>Welcome to Cloud Native Image</h1>"))
+	w.Write([]byte(fmt.Sprintf("<h1>%d<h1>", cost)))
 }
 
 func main() {
