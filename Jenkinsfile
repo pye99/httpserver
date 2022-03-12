@@ -34,9 +34,12 @@ spec:
   stages {
     stage('Stage 1: Build with Kaniko') {
       steps {
+        script {
+          env.imageTag = sh (script: 'git rev-parse --short HEAD ${GIT_COMMIT}', returnStdout: true).trim()
+        }
         container('kaniko') {
           sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd`/src --cache=true \
-                  --destination=cloudnative.azurecr.io/httpserver:$CI_COMMIT_TAG \
+                  --destination=cloudnative.azurecr.io/httpserver:$imageTag \
                   --insecure \
                   --skip-tls-verify  \
                   -v=debug'
