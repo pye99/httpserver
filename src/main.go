@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/Am2901/httpserver/metrics"
+	"github.com/Am2901/httpserver/src/metrics"
 	"log"
 	"math/rand"
 	"net"
