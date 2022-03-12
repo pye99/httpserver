@@ -1,49 +1,47 @@
 pipeline {
-    agent any
-    environment {
-        GITHUB_URL = "http://github.com"
-        GITHUB_ORG = "Am2901"
-        GITHUB_REPO = "httpserver"
+  agent {
+    kubernetes {
+      yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    jenkins: worker
+spec:
+  containers:
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:debug
+    command:
+    - sleep
+    args:
+    - 99999
+    tty: true
+    volumeMounts:
+      - name: dockercred
+        mountPath: /root/.docker/
+  volumes:
+  - name: dockercred
+    secret:
+      secretName: regcred
+"""
     }
-    stages {
-        stage('Checkout') {
-            steps {
-               echo "build"
-                script{
-                    def scmVars =   checkout(
-                                        [$class: 'GitSCM', branches: [[name: "${ghprbActualCommit}"]], 
-                                        doGenerateSubmoduleConfigurations: false,
-                                        submoduleCfg: [], 
-                                        extensions: [
-                                            [$class: 'RelativeTargetDirectory', relativeTargetDir: 'codes'],
-                                            [$class: 'CleanBeforeCheckout']
-                                        ],
-                                        userRemoteConfigs: [
-                                                [
-                                                    credentialsId: 'github-password', 
-                                                    name: 'origin', 
-                                                    refspec: '+refs/pull/*:refs/remotes/origin/pr/*', 
-                                                    url: "${GITHUB_URL}/${GITHUB_ORG}/${GITHUB_REPO}.git"
-                                                ]
-                                            ]
-                                        ]
-                                    )
-                    env.GIT_BRANCH = "${scmVars.GIT_BRANCH}"
-                    env.GIT_COMMIT = "${scmVars.GIT_COMMIT}"
-                }                
-            }
+  }
+  environment {
+      GITHUB_URL = "http://github.com"
+      GITHUB_ORG = "Am2901"
+      GITHUB_REPO = "httpserver"
+  }
+  stages {
+    stage('Stage 1: Build with Kaniko') {
+      steps {
+        container('kaniko') {
+          sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd`/src --cache=true \
+                  --destination=cloudnative.azurecr.io/httpserver:$CI_COMMIT_TAG \
+                  --insecure \
+                  --skip-tls-verify  \
+                  -v=debug'
         }
-
-        stage('Build') {
-            steps {
-               echo "build"
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo 'Deployment in progress'
-            }
-        }
-    }
+      }
+    }  
+  }
 }
