@@ -1,49 +1,53 @@
+import java.text.SimpleDateFormat;
+
 pipeline {
-    agent any
-    environment {
-        GITHUB_URL = "http://github.com"
-        GITHUB_ORG = "Am2901"
-        GITHUB_REPO = "httpserver"
+  agent {
+    kubernetes {
+      yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    jenkins: worker
+spec:
+  containers:
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:debug
+    command:
+    - sleep
+    args:
+    - 99999
+    tty: true
+    volumeMounts:
+      - name: docker-secret
+        mountPath: /kaniko/.docker
+        readOnly: true
+  volumes:
+  - name: docker-secret
+    secret:
+      secretName: regcred
+"""
     }
-    stages {
-        stage('Checkout') {
-            steps {
-               echo "build"
-                script{
-                    def scmVars =   checkout(
-                                        [$class: 'GitSCM', branches: [[name: "${ghprbActualCommit}"]], 
-                                        doGenerateSubmoduleConfigurations: false,
-                                        submoduleCfg: [], 
-                                        extensions: [
-                                            [$class: 'RelativeTargetDirectory', relativeTargetDir: 'codes'],
-                                            [$class: 'CleanBeforeCheckout']
-                                        ],
-                                        userRemoteConfigs: [
-                                                [
-                                                    credentialsId: 'github-password', 
-                                                    name: 'origin', 
-                                                    refspec: '+refs/pull/*:refs/remotes/origin/pr/*', 
-                                                    url: "${GITHUB_URL}/${GITHUB_ORG}/${GITHUB_REPO}.git"
-                                                ]
-                                            ]
-                                        ]
-                                    )
-                    env.GIT_BRANCH = "${scmVars.GIT_BRANCH}"
-                    env.GIT_COMMIT = "${scmVars.GIT_COMMIT}"
-                }                
-            }
+  }
+  environment {
+    DATED_GIT_HASH = "${new SimpleDateFormat("yyMMddHHmmss").format(new Date())}${GIT_COMMIT.take(6)}"
+  }
+  stages {
+    stage('Configure') {
+      steps {
+        echo "hello, starting"
+      }
+    }    
+    stage('Build with Kaniko') {
+      steps {
+        container('kaniko') {
+          sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd`/src --cache=true \
+          --destination=cloudnative.azurecr.io/httpserver:${DATED_GIT_HASH} \
+                  --insecure \
+                  --skip-tls-verify  \
+                  -v=debug'
         }
-
-        stage('Build') {
-            steps {
-               echo "build"
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo 'Deployment in progress'
-            }
-        }
-    }
+      }
+    }  
+  }
 }
