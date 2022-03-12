@@ -41,9 +41,10 @@ spec:
     }    
     stage('Build with Kaniko') {
       steps {
+        echo ${GIT_COMMIT_REV}
         container('kaniko') {
           sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd`/src --cache=true \
-                  --destination=cloudnative.azurecr.io/httpserver:$GIT_COMMIT_REV \
+          --destination=cloudnative.azurecr.io/httpserver:${GIT_COMMIT_REV} \
                   --insecure \
                   --skip-tls-verify  \
                   -v=debug'
