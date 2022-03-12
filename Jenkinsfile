@@ -1,18 +1,33 @@
-node {
-    def root = tool name: 'Go1.8', type: 'go'
-    ws("${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_ID}/src/github.com/grugrut/golang-ci-jenkins-pipeline") {
-        withEnv(["GOROOT=${root}", "GOPATH=${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_ID}/", "PATH+GO=${root}/bin"]) {
-            env.PATH="${GOPATH}/bin:$PATH"
-            
-            stage 'Checkout'
-        
-            git url: 'https://github.com/Am2901/httpserver.git'    
-            
-            stage 'Build'
-            sh 'go build src/'
-            
-            stage 'Deploy'
-            // Do nothing.
+job('example') {
+    scm {
+        git {
+            remote {
+                github('Am2901/httpserver')
+                refspec('+refs/pull/*:refs/remotes/origin/pr/*')
+            }
+            branch('${sha1}')
+        }
+    }
+    triggers {
+        githubPullRequest {
+            triggerPhrase('OK to test')
+            onlyTriggerPhrase()
+            useGitHubHooks()
+            permitAll()
+            autoCloseFailedPullRequests()
+            allowMembersOfWhitelistedOrgsAsAdmin()
+            extensions {
+                commitStatus {
+                    context('deploy to staging site')
+                    triggeredStatus('starting deployment to staging site...')
+                    startedStatus('deploying to staging site...')
+                    statusUrl('http://mystatussite.com/prs')
+                    completedStatus('SUCCESS', 'All is well')
+                    completedStatus('FAILURE', 'Something went wrong. Investigate!')
+                    completedStatus('PENDING', 'still in progress...')
+                    completedStatus('ERROR', 'Something went really wrong. Investigate!')
+                }
+            }
         }
     }
 }
