@@ -48,11 +48,11 @@ spec:
                   -v=debug'
         }
       }
-    stage('Helm build') {
-      steps {
-        echo "hello, starting helm build"
-      }
     }
+    stage('Helm') {
+      steps {
+        echo "hello, Helm"
+      }
     }
   }
 }
