@@ -38,7 +38,7 @@ spec:
         echo "hello, starting"
       }
     }    
-    stage('Build with Kaniko') {
+    stage('Build with Kaniko and Push') {
       steps {
         container('kaniko') {
           sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd`/src --cache=true \
@@ -48,6 +48,10 @@ spec:
                   -v=debug'
         }
       }
-    }  
+    stage('Helm build') {
+      steps {
+        echo "hello, starting helm build"
+      }
+    }
   }
 }
