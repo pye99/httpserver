@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: cloudnativestg1.azurecr.io/httpserver:1.1
+  repository: cloudnative.azurecr.io/httpserver
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -40,6 +40,7 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 80
+  targetPort: 8080
 
 ingress:
   enabled: true
