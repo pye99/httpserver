@@ -53,5 +53,6 @@ spec:
         echo "hello, starting helm build"
       }
     }
+    }
   }
 }
