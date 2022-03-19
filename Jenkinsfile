@@ -81,8 +81,8 @@ spec:
   }
       steps {
         container('helm package'){
-            sh "helm package `pwd`/deploy/helm/httpserver --version ${HELM_VERSION}"
-            sh "ls -l `pwd`/httpserver.${HELM_VERSION}.tgz"
+            sh "helm package `pwd`/deploy/helm/httpserver --version 0.1.${HELM_VERSION}"
+            sh "ls -l `pwd`/httpserver-0.1.${HELM_VERSION}.tgz"
         }
       }
     }
