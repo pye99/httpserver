@@ -31,7 +31,7 @@ spec:
   }
   environment {
     DATED_GIT_HASH = "${new SimpleDateFormat("yyMMddHHmmss").format(new Date())}${GIT_COMMIT.take(6)}"
-    HELM_VERSION = ${BUILD_NUMBER}
+    HELM_VERSION = "${BUILD_NUMBER}"
   }
   stages {
     stage('Configure') {
