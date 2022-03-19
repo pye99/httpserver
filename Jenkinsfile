@@ -81,7 +81,7 @@ spec:
   }
       steps {
         container('helm'){
-            sh "helm package `pwd`/deploy/helm/httpserver --version 0.1.${HELM_VERSION}"
+            sh "helm package `pwd`/deploy/helm/httpserver --app-version ${DATED_GIT_HASH} --version 0.1.${HELM_VERSION}"
             sh "helm push `pwd`/httpserver-0.1.${HELM_VERSION}.tgz oci://cloudnative.azurecr.io/helm"
         }
       }
