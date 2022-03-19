@@ -31,6 +31,7 @@ spec:
   }
   environment {
     DATED_GIT_HASH = "${new SimpleDateFormat("yyMMddHHmmss").format(new Date())}${GIT_COMMIT.take(6)}"
+    HELM_VERSION = ${BUILD_NUMBER}
   }
   stages {
     stage('Configure') {
@@ -80,9 +81,8 @@ spec:
   }
       steps {
         container('helm package'){
-            sh "${env.BRANCH_NAME}"
-            #sh "helm package `pwd`/deploy/helm/httpserver --version ${DATED_GIT_HASH}"
-            #sh "ls -l `pwd`/httpserver.${DATED_GIT_HASH}.tgz"
+            sh "helm package `pwd`/deploy/helm/httpserver --version ${HELM_VERSION}"
+            sh "ls -l `pwd`/httpserver.${HELM_VERSION}.tgz"
         }
       }
     }
