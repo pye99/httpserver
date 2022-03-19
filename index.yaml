@@ -3,22 +3,12 @@ entries:
   httpserver:
   - apiVersion: v2
     appVersion: v0.0.4
-    created: "2022-03-20T03:27:32.840699+08:00"
+    created: "2022-03-20T03:34:00.222549+08:00"
     description: A Helm chart for Kubernetes
-    digest: 4d3f2581f240f317875e338d7dd8689f45a609e8108d1b557bb86574390da6d5
+    digest: 4ef3a45a77b96271170a3938ff6a8327fcd08d4fc1a6946da5d7f2de04fa478b
     name: httpserver
     type: application
     urls:
-    - httpserver-1.0.1.tgz
-    version: 1.0.1
-  - apiVersion: v2
-    appVersion: v0.0.4
-    created: "2022-03-20T03:27:32.840323+08:00"
-    description: A Helm chart for Kubernetes
-    digest: f29c3e56b6ec0d6d6a5dc0e016c9470eef46a74601aa7f8e8d077a7d5d3df2fe
-    name: httpserver
-    type: application
-    urls:
-    - httpserver-0.1.1.tgz
+    - oci://cloudnative.azurecr.io/repo/stable/httpserver-0.1.1.tgz
     version: 0.1.1
-generated: "2022-03-20T03:27:32.839801+08:00"
+generated: "2022-03-20T03:34:00.222036+08:00"
