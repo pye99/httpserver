@@ -3,8 +3,7 @@ import java.text.SimpleDateFormat;
 pipeline {
   agent {
     kubernetes {
-      yaml ""
-      "
+      yaml """
       apiVersion: v1
       kind: Pod
       metadata:
@@ -26,8 +25,8 @@ pipeline {
       volumes:
         -name: docker - secret
       secret:
-        secretName: regcred ""
-      "
+        secretName: regcred
+      """
     }
   }
   environment {
