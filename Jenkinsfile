@@ -38,7 +38,7 @@ spec:
         echo "hello, starting"
       }
     }
-    stage('Build with Kaniko and Push') {
+    stage('image build and push') {
       steps {
         container('kaniko') {
           sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd`/src --cache=true \
@@ -80,8 +80,9 @@ spec:
   }
       steps {
         container('helm package'){
-            sh "helm package `pwd`/deploy/helm/httpserver --version ${DATED_GIT_HASH}"
-            sh "ls -l `pwd`/httpserver.${DATED_GIT_HASH}.tgz"
+            sh "${env.BRANCH_NAME}"
+            #sh "helm package `pwd`/deploy/helm/httpserver --version ${DATED_GIT_HASH}"
+            #sh "ls -l `pwd`/httpserver.${DATED_GIT_HASH}.tgz"
         }
       }
     }
