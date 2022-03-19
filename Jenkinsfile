@@ -50,7 +50,7 @@ spec:
         }
       }
     }
-    stage('Helm') {
+    stage('Helm Package and Push') {
   agent {
     kubernetes {
       yaml """
@@ -83,6 +83,7 @@ spec:
         container('helm'){
             sh "helm package `pwd`/deploy/helm/httpserver --version 0.1.${HELM_VERSION}"
             sh "ls -l `pwd`/httpserver-0.1.${HELM_VERSION}.tgz"
+            sh "helm push `pwd`/httpserver-0.1.${HELM_VERSION}.tgz oci://cloudnative.azurecr.io"
         }
       }
     }
