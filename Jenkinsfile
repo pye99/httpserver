@@ -62,7 +62,7 @@ spec:
      }
       steps {
         container('helm'){
-            sh "tree `pwd`"
+            sh "ls -l `pwd`/*/*/*/*/*"
             sh "helm package `pwd`/deploy/helm/httpserver"
         }
       }
