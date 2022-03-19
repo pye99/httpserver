@@ -80,7 +80,7 @@ spec:
     }
   }
       steps {
-        container('helm package'){
+        container('helm'){
             sh "helm package `pwd`/deploy/helm/httpserver --version 0.1.${HELM_VERSION}"
             sh "ls -l `pwd`/httpserver-0.1.${HELM_VERSION}.tgz"
         }
