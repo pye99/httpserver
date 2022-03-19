@@ -1,4 +1,7 @@
 import java.text.SimpleDateFormat;
+podTemplate(label: 'Jenkins', containers: [
+  containerTemplate(name: 'helm', image: 'alpine/helm:3.5.3', command: 'cat', ttyEnabled: true),
+],
 
 pipeline {
   agent {
@@ -50,8 +53,8 @@ spec:
       }
     }
     stage('Helm') {
-      steps {
-        echo "hello, Helm"
+      container('helm'){
+        echo "starting helm stage"
       }
     }
   }
