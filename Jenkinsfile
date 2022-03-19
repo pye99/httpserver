@@ -50,20 +50,38 @@ spec:
       }
     }
     stage('Helm') {
-     agent {
-       kubernetes {
-             containerTemplate {
-               name 'helm'
-               image 'alpine/helm:3.1.1'
-               ttyEnabled true
-               command 'cat'
-          }
-        }
-     }
+  agent {
+    kubernetes {
+      yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    jenkins: worker
+spec:
+  containers:
+  - name: helm
+    image: alpine/helm:3.8.1
+    command:
+    - sleep
+    args:
+    - 99999
+    tty: true
+    volumeMounts:
+      - name: docker-secret
+        mountPath: /root/.config/helm/registry/config.json
+        readOnly: true
+  volumes:
+  - name: docker-secret
+    secret:
+      secretName: regcred
+"""
+    }
+  }
       steps {
-        container('helm'){
-            sh "ls -l `pwd`/*/*/*/*/*"
-            sh "helm package `pwd`/deploy/helm/httpserver"
+        container('helm package'){
+            sh "helm package `pwd`/deploy/helm/httpserver --version ${DATED_GIT_HASH}"
+            sh "ls -l `pwd`/httpserver.${DATED_GIT_HASH}.tgz"
         }
       }
     }
