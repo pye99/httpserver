@@ -70,7 +70,7 @@ spec:
     tty: true
     volumeMounts:
       - name: docker-secret
-        mountPath: /root/.config/helm/registry/config.json
+        mountPath: /root/.config/helm/registry
         readOnly: true
   volumes:
   - name: docker-secret
