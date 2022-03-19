@@ -37,8 +37,8 @@ spec:
       steps {
         echo "hello, starting"
       }
-    }    
-    stage('Build with Kaniko') {
+    }
+    stage('Build with Kaniko and Push') {
       steps {
         container('kaniko') {
           sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd`/src --cache=true \
@@ -48,6 +48,24 @@ spec:
                   -v=debug'
         }
       }
-    }  
+    }
+    stage('Helm') {
+     agent {
+       kubernetes {
+             containerTemplate {
+               name 'helm'
+               image 'alpine/helm:3.1.1'
+               ttyEnabled true
+               command 'cat'
+          }
+        }
+     }
+      steps {
+        container('helm'){
+            sh "tree `pwd`"
+            sh "helm package `pwd`/deploy/helm/httpserver"
+        }
+      }
+    }
   }
 }
