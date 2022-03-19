@@ -9,6 +9,6 @@ entries:
     name: httpserver
     type: application
     urls:
-    - https://raw.githubusercontent.com/Am2901/httpserver/main/deploy/helm/repo/stable/index.yaml
+    - https://raw.githubusercontent.com/Am2901/httpserver/main/deploy/helm/repo/stable/httpserver-0.1.1.tgz
     version: 0.1.1
 generated: "2022-03-20T03:34:00.222036+08:00"
