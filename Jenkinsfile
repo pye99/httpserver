@@ -62,7 +62,7 @@ spec:
      }
       steps {
         container('helm'){
-            sh "echo $PWD"
+            sh "helm package `pwd`/deploy/helm/httpserver"
         }
       }
     }
