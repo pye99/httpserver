@@ -1,6 +1,6 @@
 apiVersion: v2
 name: httpserver
-description: A Helm chart for Kubernetes
+description: httpserver v0.1.1
 
 # A chart can be either an 'application' or a 'library' chart.
 #
