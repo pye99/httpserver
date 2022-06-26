@@ -42,7 +42,7 @@ spec:
     stage('image build and push') {
       steps {
         container('kaniko') {
-          sh 'sleep 9999; /kaniko/executor -f `pwd`/Dockerfile -c `pwd`/src --cache=true \
+          sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd`/src --cache=true \
           --destination=cloudnative.azurecr.io/httpserver:${DATED_GIT_HASH} \
                   --insecure \
                   --skip-tls-verify  \
