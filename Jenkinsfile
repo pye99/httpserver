@@ -12,7 +12,7 @@ metadata:
 spec:
   containers:
   - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug
+    image: gcr.io/kaniko-project/executor@sha256:0fae223f496525e31226cde473ec77ed15abfa8cbabff5ff5bf1c5268355bbb0
     command:
     - sleep
     args:
